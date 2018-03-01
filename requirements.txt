@@ -1,1 +1,2 @@
 -e git://github.com/androguard/androguard.git#egg=androguard
+termcolor==1.1.0

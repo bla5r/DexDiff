@@ -19,12 +19,30 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+import sys
 from androguard.core.bytecodes.dvm import DalvikVMFormat
+from dexdiff.Logger import Logger
 
 class ClassGraph:
 	def __init__(self, dexFilename):
-		self.rawFile = open(dexFilename, "r")
-		self.dvmRepr = dvm = DalvikVMFormat(raw.read())
+		self.logger = Logger(__name__).getLogger()
+		self.dexFilename = dexFilename
+		self._openFile(dexFilename)
 
 	def __exit__(self):
+		self._closeFile()
+
+	def build(self):
+		self.logger.info("Parsing \"%s\"..." % self.dexFilename)
+		self.dvmRepr = DalvikVMFormat(self.rawFile.read())
+		#self.logger.info("Building callgraph...")
+
+	def _openFile(self, filename):
+		try:
+			self.rawFile = open(filename, "r")
+		except IOError:
+			self.logger.error("Unable to open the file \"%s\"" % filename)
+			sys.exit(1)
+
+	def _closeFile(self, rawFile):
 		self.rawFile.close()

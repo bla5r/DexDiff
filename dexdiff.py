@@ -19,6 +19,22 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+import sys
 from dexdiff.ClassGraph import ClassGraph
+from dexdiff.Logger import Logger
+from dexdiff.ArgParser import ArgParser
 
-graph = ClassGraph("/tmp/classes.dex")
+def buildGraphs(argParser):
+	graphs = []
+	for filename in argParser.getInitialFiles():
+		graphs.append(ClassGraph(filename))
+	for graph in graphs:
+		graph.build()
+
+def main(argc, argv):
+	Logger.enable()
+	argParser = ArgParser(argv)
+	buildGraphs(argParser)
+
+if __name__ == "__main__":
+	main(sys.argv, sys.argv[1:])
