@@ -19,24 +19,27 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-import sys
-from dexdiff.ArgParser import ArgParser
-from dexdiff.Extractor import Extractor
-from dexdiff.Callgraph import Callgraph
-from dexdiff.Logger import Logger
+class Method:
+	def __init__(self, idx, item):
+		self.idx = idx
+		self.item = item
+		self.callers = []
+		self.callees = []
 
-def buildGraphs(argParser):
-	methods = {}
-	for filename in argParser.getInitialFiles():
-		dvmRepr, tmp = Extractor.getMethods(filename)
-		methods = dict(methods.items() + tmp.items())
-	callgraph = Callgraph(dvmRepr, methods)
-	callgraph.build()
+	def addCaller(self, method):
+		self.callers.append(method)
 
-def main(argc, argv):
-	Logger.enable()
-	argParser = ArgParser(argv)
-	buildGraphs(argParser)
+	def addCallee(self, method):
+		self.callees.append(method)
 
-if __name__ == "__main__":
-	main(sys.argv, sys.argv[1:])
+	def getCallers(self):
+		return (self.callers)
+
+	def getCallees(self):
+		return (self.callees)
+
+	def getItem(self):
+		return (self.item)
+
+	def getIdx(self):
+		return (self.idx)

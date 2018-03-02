@@ -19,24 +19,13 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-import sys
-from dexdiff.ArgParser import ArgParser
-from dexdiff.Extractor import Extractor
-from dexdiff.Callgraph import Callgraph
-from dexdiff.Logger import Logger
+import hashlib
 
-def buildGraphs(argParser):
-	methods = {}
-	for filename in argParser.getInitialFiles():
-		dvmRepr, tmp = Extractor.getMethods(filename)
-		methods = dict(methods.items() + tmp.items())
-	callgraph = Callgraph(dvmRepr, methods)
-	callgraph.build()
+class Signature:
+	@staticmethod
+	def genHashIdx(bytes):
+		return (hashlib.sha256(bytes).digest())
 
-def main(argc, argv):
-	Logger.enable()
-	argParser = ArgParser(argv)
-	buildGraphs(argParser)
-
-if __name__ == "__main__":
-	main(sys.argv, sys.argv[1:])
+	@staticmethod
+	def genHexHashIdx(bytes):
+		return (hashlib.sha256(bytes).hexdigest())

@@ -19,24 +19,7 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-import sys
-from dexdiff.ArgParser import ArgParser
-from dexdiff.Extractor import Extractor
-from dexdiff.Callgraph import Callgraph
-from dexdiff.Logger import Logger
-
-def buildGraphs(argParser):
-	methods = {}
-	for filename in argParser.getInitialFiles():
-		dvmRepr, tmp = Extractor.getMethods(filename)
-		methods = dict(methods.items() + tmp.items())
-	callgraph = Callgraph(dvmRepr, methods)
-	callgraph.build()
-
-def main(argc, argv):
-	Logger.enable()
-	argParser = ArgParser(argv)
-	buildGraphs(argParser)
-
-if __name__ == "__main__":
-	main(sys.argv, sys.argv[1:])
+class BasicBlock:
+	def __init__(self):
+		self.instructions = None
+		self.bytecode = None

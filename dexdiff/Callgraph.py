@@ -20,29 +20,24 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 import sys
-from androguard.core.bytecodes.dvm import DalvikVMFormat
 from dexdiff.Logger import Logger
+from dexdiff.Linker import Linker, branchOpcodes
+from dexdiff.Renderer import Renderer
 
-class ClassGraph:
-	def __init__(self, dexFilename):
+class Callgraph:
+	def __init__(self, dvmRepr, methods):
 		self.logger = Logger(__name__).getLogger()
-		self.dexFilename = dexFilename
-		self._openFile(dexFilename)
-
-	def __exit__(self):
-		self._closeFile()
+		self.dvmRepr = dvmRepr
+		self.methods = methods
 
 	def build(self):
-		self.logger.info("Parsing \"%s\"..." % self.dexFilename)
-		self.dvmRepr = DalvikVMFormat(self.rawFile.read())
-		#self.logger.info("Building callgraph...")
+		self.logger.info("Building callgraph...")
+		for name, method in self.methods.iteritems():
+			if method.getItem().get_code() != None:
+				for inst in method.getItem().get_code().get_bc().get_instructions():
+					if (inst.get_op_value() in branchOpcodes):
+						branchOpcodes[inst.get_op_value()](self.dvmRepr, self.methods, method, inst)
+		Renderer.build(self.methods)
 
-	def _openFile(self, filename):
-		try:
-			self.rawFile = open(filename, "r")
-		except IOError:
-			self.logger.error("Unable to open the file \"%s\"" % filename)
-			sys.exit(1)
 
-	def _closeFile(self, rawFile):
-		self.rawFile.close()
+

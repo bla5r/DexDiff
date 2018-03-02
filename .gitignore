@@ -102,3 +102,7 @@ ENV/
 
 # Dependencies
 src/
+
+# Misc
+.DS_Store
+out*

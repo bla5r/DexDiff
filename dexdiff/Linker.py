@@ -19,24 +19,28 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-import sys
-from dexdiff.ArgParser import ArgParser
-from dexdiff.Extractor import Extractor
-from dexdiff.Callgraph import Callgraph
-from dexdiff.Logger import Logger
+from dexdiff.Signature import Signature
 
-def buildGraphs(argParser):
-	methods = {}
-	for filename in argParser.getInitialFiles():
-		dvmRepr, tmp = Extractor.getMethods(filename)
-		methods = dict(methods.items() + tmp.items())
-	callgraph = Callgraph(dvmRepr, methods)
-	callgraph.build()
+class Linker:
+	@staticmethod
+	def _findMethod(dvmRepr, methods, idx):
+		hashIdx = Signature.genHashIdx(str(dvmRepr.get_cm_method(idx)))
+		try:
+			return (methods[hashIdx])
+		except KeyError:
+			return (None)
+	
+	@staticmethod
+	def invokeTie(dvmRepr, methods, caller, inst):
+		callee = Linker._findMethod(dvmRepr, methods, inst.get_operands()[len(inst.get_operands()) - 1][1])
+		if callee != None:
+			callee.addCaller(caller)
+			caller.addCallee(callee)
 
-def main(argc, argv):
-	Logger.enable()
-	argParser = ArgParser(argv)
-	buildGraphs(argParser)
-
-if __name__ == "__main__":
-	main(sys.argv, sys.argv[1:])
+branchOpcodes = {
+	0x6e: Linker.invokeTie,
+	0x6f: Linker.invokeTie,
+	0x70: Linker.invokeTie,
+	0x71: Linker.invokeTie,
+	0x72: Linker.invokeTie
+}
