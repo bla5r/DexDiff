@@ -25,7 +25,3 @@ class Signature:
 	@staticmethod
 	def genHashIdx(bytes):
 		return (hashlib.sha256(bytes).digest())
-
-	@staticmethod
-	def genHexHashIdx(bytes):
-		return (hashlib.sha256(bytes).hexdigest())

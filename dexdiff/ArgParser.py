@@ -48,4 +48,3 @@ class ArgParser:
 		self.parser.add_argument("-c", "--classes", nargs="+", required=False, help="Specific classes to inspect", metavar="CLASSNAME")
 		self.parser.add_argument("-o", "--output", required=True, help="Name of the output file", metavar="FILENAME")
 		self.argv = self.parser.parse_args(argv)
-		#self.logger.debug(self.argv)
