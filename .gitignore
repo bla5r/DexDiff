@@ -106,3 +106,4 @@ src/
 # Misc
 .DS_Store
 out*
+sample/

@@ -19,20 +19,20 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-from dexdiff.Signature import Signature
+from dexdiff.Extractor import Extractor
 
 class Linker:
 	@staticmethod
 	def _findMethod(dvmRepr, methods, idx):
-		hashIdx = Signature.genHashIdx(str(dvmRepr.get_cm_method(idx)))
+		hashIdx = Extractor._getHashIdx(dvmRepr, idx)
 		try:
 			return (methods[hashIdx])
 		except KeyError:
 			return (None)
 	
 	@staticmethod
-	def invokeTie(dvmRepr, methods, caller, inst):
-		callee = Linker._findMethod(dvmRepr, methods, inst.get_operands()[len(inst.get_operands()) - 1][1])
+	def invokeTie(methods, caller, inst):
+		callee = Linker._findMethod(caller.getDvmRepr(), methods, inst.get_operands()[len(inst.get_operands()) - 1][1])
 		if callee != None:
 			callee.addCaller(caller)
 			caller.addCallee(callee)

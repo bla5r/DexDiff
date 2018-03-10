@@ -73,9 +73,9 @@ class Renderer:
 		graph = graphviz.Digraph(format="png")
 		logger = Logger(__name__).getLogger()
 		for name, method in methods.iteritems():
-			graph.node(method.getIdx(), "%s->%s()" % (method.getItem().get_class_name(), method.getItem().get_name()))
+			graph.node(method.getIdx(), method.getMethodName())
 			for callee in method.getCallees():
-				logger.debug("%s->%s() -> %s->%s()" % (method.getItem().get_class_name(), method.getItem().get_name(), callee.getItem().get_class_name(), callee.getItem().get_name()))
+				logger.debug("%s -> %s" % (method.getMethodName(), callee.getMethodName()))
 				graph.edge(method.getIdx(), callee.getIdx())
 		graph = Renderer._applyStyles(graph)
 		Renderer._writeFile(graph, outFile)

@@ -20,7 +20,9 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 class Method:
-	def __init__(self, idx, item):
+	def __init__(self, dvmRepr, methodName, idx, item):
+		self.dvmRepr = dvmRepr
+		self.methodName = methodName
 		self.idx = idx
 		self.item = item
 		self.callers = []
@@ -37,6 +39,12 @@ class Method:
 
 	def getCallees(self):
 		return (self.callees)
+
+	def getDvmRepr(self):
+		return (self.dvmRepr)
+
+	def getMethodName(self):
+		return (self.methodName)
 
 	def getItem(self):
 		return (self.item)

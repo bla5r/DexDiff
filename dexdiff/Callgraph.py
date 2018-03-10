@@ -25,19 +25,29 @@ from dexdiff.Linker import Linker, branchOpcodes
 from dexdiff.Renderer import Renderer
 
 class Callgraph:
-	def __init__(self, dvmRepr, methods):
+	def __init__(self):
 		self.logger = Logger(__name__).getLogger()
-		self.dvmRepr = dvmRepr
-		self.methods = methods
+		self.dexFiles = []
+
+	def addDex(self, dvmRepr, methods):
+		self.dexFiles.append((dvmRepr, methods))
+
+	def _mergeDicts(self, x, y):
+		z = x.copy()
+		z.update(y)
+		return (z)
 
 	def build(self):
 		self.logger.info("Building callgraph...")
-		for name, method in self.methods.iteritems():
+		methods = {}
+		for dex in self.dexFiles:
+			methods = self._mergeDicts(methods, dex[1])
+		for name, method in methods.iteritems():
 			if method.getItem().get_code() != None:
 				for inst in method.getItem().get_code().get_bc().get_instructions():
 					if (inst.get_op_value() in branchOpcodes):
-						branchOpcodes[inst.get_op_value()](self.dvmRepr, self.methods, method, inst)
-		Renderer.build(self.methods)
+						branchOpcodes[inst.get_op_value()](methods, method, inst)
+		Renderer.build(methods)
 
 
 

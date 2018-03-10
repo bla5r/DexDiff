@@ -57,13 +57,17 @@ class Extractor:
 		return (''.join(["%02x" % ord(x) for x in bytes]).strip())
 
 	@staticmethod
+	def _getHashIdx(dvmRepr, idx):
+		return (Signature.genHashIdx(str(dvmRepr.get_cm_method(idx))))
+
+	@staticmethod
 	def getMethods(dexFilename):
 		logger = Logger(__name__).getLogger()
 		methods = {}
 		dvmRepr = Extractor._parseDvmRepr(dexFilename)
-		for classItem in dvmRepr.get_classes():
-			logger.debug("Extracting information from %s..." % classItem.get_name())
-			for methodItem in classItem.get_methods():
-				hashIdx = Signature.genHashIdx(str(dvmRepr.get_cm_method(methodItem.get_method_idx())))
-				methods[hashIdx] = Method(Extractor._bytesToHex(hashIdx), methodItem)
+		for methodItem in dvmRepr.get_methods():
+			cm = dvmRepr.get_cm_method(methodItem.get_method_idx())
+			methodName = "%s->%s%s%s" % (cm[0], cm[1], cm[2][0], cm[2][1])
+			hashIdx = Extractor._getHashIdx(dvmRepr, methodItem.get_method_idx())
+			methods[hashIdx] = Method(dvmRepr, methodName, Extractor._bytesToHex(hashIdx), methodItem)
 		return (dvmRepr, methods)
