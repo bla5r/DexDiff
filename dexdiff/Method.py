@@ -19,12 +19,15 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+from dexdiff.MethodChar import MethodChar
+
 class Method:
 	def __init__(self, dvmRepr, methodName, idx, item):
 		self.dvmRepr = dvmRepr
 		self.methodName = methodName
 		self.idx = idx
 		self.item = item
+		self.char = MethodChar(item)
 		self.callers = []
 		self.callees = []
 
@@ -51,3 +54,6 @@ class Method:
 
 	def getIdx(self):
 		return (self.idx)
+
+	def getChar(self):
+		return (self.char)

@@ -58,7 +58,7 @@ class Extractor:
 
 	@staticmethod
 	def _getHashIdx(dvmRepr, idx):
-		return (Signature.genHashIdx(str(dvmRepr.get_cm_method(idx))))
+		return (Signature.genSha256(str(dvmRepr.get_cm_method(idx))))
 
 	@staticmethod
 	def getMethods(dexFilename):
@@ -66,8 +66,9 @@ class Extractor:
 		methods = {}
 		dvmRepr = Extractor._parseDvmRepr(dexFilename)
 		for methodItem in dvmRepr.get_methods():
-			cm = dvmRepr.get_cm_method(methodItem.get_method_idx())
-			methodName = "%s->%s%s%s" % (cm[0], cm[1], cm[2][0], cm[2][1])
-			hashIdx = Extractor._getHashIdx(dvmRepr, methodItem.get_method_idx())
-			methods[hashIdx] = Method(dvmRepr, methodName, Extractor._bytesToHex(hashIdx), methodItem)
+			if methodItem.get_code() != None:
+				cm = dvmRepr.get_cm_method(methodItem.get_method_idx())
+				methodName = "%s->%s%s%s" % (cm[0], cm[1], cm[2][0], cm[2][1])
+				hashIdx = Extractor._getHashIdx(dvmRepr, methodItem.get_method_idx())
+				methods[hashIdx] = Method(dvmRepr, methodName, Extractor._bytesToHex(hashIdx), methodItem)
 		return (methods)

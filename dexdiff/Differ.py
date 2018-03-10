@@ -45,4 +45,5 @@ class Differ:
 		return (initCallgraph, modCallgraph)
 
 	def run(self):
-		self._buildGraphs()
+		initCallgraph, modCallgraph = self._buildGraphs()
+		initCallgraph.compare(modCallgraph)

@@ -19,9 +19,12 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-import hashlib
+from dexdiff.Signature import Signature
 
-class Signature:
-	@staticmethod
-	def genSha256(bytes):
-		return (hashlib.sha256(bytes).digest())
+class MethodChar:
+	def __init__(self, method):
+		self.method = method
+		self.hashBytecode = Signature.genSha256(method.get_code().get_bc().get_raw())
+
+	def getHashBytecode(self):
+		return (self.hashBytecode)

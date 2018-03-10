@@ -28,26 +28,35 @@ class Callgraph:
 	def __init__(self):
 		self.logger = Logger(__name__).getLogger()
 		self.dexMethods = []
+		self.hashBytecode = []
+		self.methods = {}
 
 	def addMethods(self, methods):
 		self.dexMethods.append(methods)
+
+	def getMethods(self):
+		return (self.methods)
 
 	def _mergeDicts(self, x, y):
 		z = x.copy()
 		z.update(y)
 		return (z)
 
+	def compare(self, graph):
+		for name, initMethodsItem in self.methods.iteritems():
+			if self.hashBytecode.count(initMethodsItem.getChar().getHashBytecode()) == 1:
+				self.logger.debug("Fixedpoint found: %s", initMethodsItem.getMethodName())
+
 	def build(self):
 		self.logger.info("Building callgraph...")
-		methods = {}
 		for dexMethodsItem in self.dexMethods:
-			methods = self._mergeDicts(methods, dexMethodsItem)
-		for name, method in methods.iteritems():
+			self.methods = self._mergeDicts(self.methods, dexMethodsItem)
+		for name, method in self.methods.iteritems():
 			if method.getItem().get_code() != None:
+				self.hashBytecode.append(method.getChar().getHashBytecode())
 				for inst in method.getItem().get_code().get_bc().get_instructions():
 					if (inst.get_op_value() in branchOpcodes):
-						branchOpcodes[inst.get_op_value()](methods, method, inst)
-		Renderer.build(methods)
-
+						branchOpcodes[inst.get_op_value()](self.methods, method, inst)
+		#Renderer.build(self.methods)
 
 
