@@ -28,8 +28,8 @@ from dexdiff.Logger import Logger
 def buildGraphs(argParser):
 	callgraph = Callgraph()
 	for filename in argParser.getInitialFiles():
-		dvmRepr, methods = Extractor.getMethods(filename)
-		callgraph.addDex(dvmRepr, methods)
+		methods = Extractor.getMethods(filename)
+		callgraph.addDex(methods)
 	callgraph.build()
 
 def main(argc, argv):

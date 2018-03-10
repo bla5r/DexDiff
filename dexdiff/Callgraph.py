@@ -27,10 +27,10 @@ from dexdiff.Renderer import Renderer
 class Callgraph:
 	def __init__(self):
 		self.logger = Logger(__name__).getLogger()
-		self.dexFiles = []
+		self.dexMethods = []
 
-	def addDex(self, dvmRepr, methods):
-		self.dexFiles.append((dvmRepr, methods))
+	def addDex(self, methods):
+		self.dexMethods.append(methods)
 
 	def _mergeDicts(self, x, y):
 		z = x.copy()
@@ -40,8 +40,8 @@ class Callgraph:
 	def build(self):
 		self.logger.info("Building callgraph...")
 		methods = {}
-		for dex in self.dexFiles:
-			methods = self._mergeDicts(methods, dex[1])
+		for dexMethodsItem in self.dexMethods:
+			methods = self._mergeDicts(methods, dexMethodsItem)
 		for name, method in methods.iteritems():
 			if method.getItem().get_code() != None:
 				for inst in method.getItem().get_code().get_bc().get_instructions():

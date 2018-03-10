@@ -70,4 +70,4 @@ class Extractor:
 			methodName = "%s->%s%s%s" % (cm[0], cm[1], cm[2][0], cm[2][1])
 			hashIdx = Extractor._getHashIdx(dvmRepr, methodItem.get_method_idx())
 			methods[hashIdx] = Method(dvmRepr, methodName, Extractor._bytesToHex(hashIdx), methodItem)
-		return (dvmRepr, methods)
+		return (methods)
