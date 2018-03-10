@@ -19,35 +19,30 @@
 # or write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-import sys
+from dexdiff.Extractor import Extractor
+from dexdiff.Callgraph import Callgraph
 from dexdiff.Logger import Logger
-from dexdiff.Linker import Linker, branchOpcodes
-from dexdiff.Renderer import Renderer
 
-class Callgraph:
-	def __init__(self):
+class Differ:
+	def __init__(self, initialFiles, modifiedFiles):
 		self.logger = Logger(__name__).getLogger()
-		self.dexMethods = []
+		self.initialFiles = initialFiles
+		self.modifiedFiles = modifiedFiles
 
-	def addMethods(self, methods):
-		self.dexMethods.append(methods)
+	def _buildGraph(self, files):
+		callgraph = Callgraph()
+		for filename in files:
+			methods = Extractor.getMethods(filename)
+			callgraph.addMethods(methods)
+		callgraph.build()
+		return (callgraph)
 
-	def _mergeDicts(self, x, y):
-		z = x.copy()
-		z.update(y)
-		return (z)
+	def _buildGraphs(self):
+		self.logger.info("Gathering information from initial file(s)...")
+		initCallgraph = self._buildGraph(self.initialFiles)
+		self.logger.info("Gathering information from modified file(s)...")
+		modCallgraph = self._buildGraph(self.modifiedFiles)
+		return (initCallgraph, modCallgraph)
 
-	def build(self):
-		self.logger.info("Building callgraph...")
-		methods = {}
-		for dexMethodsItem in self.dexMethods:
-			methods = self._mergeDicts(methods, dexMethodsItem)
-		for name, method in methods.iteritems():
-			if method.getItem().get_code() != None:
-				for inst in method.getItem().get_code().get_bc().get_instructions():
-					if (inst.get_op_value() in branchOpcodes):
-						branchOpcodes[inst.get_op_value()](methods, method, inst)
-		Renderer.build(methods)
-
-
-
+	def run(self):
+		self._buildGraphs()

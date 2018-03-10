@@ -21,21 +21,14 @@
 
 import sys
 from dexdiff.ArgParser import ArgParser
-from dexdiff.Extractor import Extractor
-from dexdiff.Callgraph import Callgraph
+from dexdiff.Differ import Differ
 from dexdiff.Logger import Logger
-
-def buildGraphs(argParser):
-	callgraph = Callgraph()
-	for filename in argParser.getInitialFiles():
-		methods = Extractor.getMethods(filename)
-		callgraph.addDex(methods)
-	callgraph.build()
 
 def main(argc, argv):
 	Logger.enable()
 	argParser = ArgParser(argv)
-	buildGraphs(argParser)
+	differ = Differ(argParser.getInitialFiles(), argParser.getModifiedFiles())
+	differ.run()
 
 if __name__ == "__main__":
 	main(sys.argv, sys.argv[1:])
